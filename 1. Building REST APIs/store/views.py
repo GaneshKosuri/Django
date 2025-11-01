@@ -5,15 +5,15 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import Product
-from .serializers import ProductSerializer
+from .models import Product, Collection
+from .serializers import ProductSerializer, CollectionSerializer
 
 
 # Create your views here.
 @api_view(['GET'])
 def product_list(request):
-    queryset = Product.objects.all()
-    seriazer = ProductSerializer(queryset, many=True)
+    queryset = Product.objects.select_related('collection').all()
+    seriazer = ProductSerializer(queryset, many=True, context={'request':request})
     return Response(seriazer.data)
 
 
@@ -28,4 +28,10 @@ def product_detail(request,id):
 
     product = get_object_or_404(Product,pk=id)
     serializer = ProductSerializer(product)
+    return Response(serializer.data)
+
+@api_view()
+def collection_detail(request,pk):
+    collection = Collection.objects.get(pk=pk)
+    serializer = CollectionSerializer(collection)
     return Response(serializer.data)
