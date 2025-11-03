@@ -11,8 +11,9 @@ class CollectionSerializer(serializers.Serializer):
 class CollectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Collection
-        fields = ['id','title']
+        fields = ['id','title','products_count']
 
+    products_count = serializers.IntegerField()
 
 class ProductSerializer(serializers.Serializer):
     id = serializers.IntegerField()
@@ -30,7 +31,7 @@ class ProductSerializer(serializers.Serializer):
     # Getting link to redirect to collection serializer
     collection = serializers.HyperlinkedRelatedField(
         queryset=Collection.objects.all(),
-        view_name='collection-detail'
+        view_name='collections-detail'
     )
 
     def calculate_tax(self,product:Product):
