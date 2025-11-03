@@ -8,6 +8,11 @@ class CollectionSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     title = serializers.CharField(max_length=255)
 
+class CollectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Collection
+        fields = ['id','title']
+
 
 class ProductSerializer(serializers.Serializer):
     id = serializers.IntegerField()
@@ -30,3 +35,26 @@ class ProductSerializer(serializers.Serializer):
 
     def calculate_tax(self,product:Product):
         return product.unit_price * Decimal(1.1)
+    
+
+# Model Serializer for Product
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['id','title','slug', 'description','unit_price','inventory', 'price_with_tax','collection' ]
+
+    price_with_tax = serializers.SerializerMethodField(method_name='calculate_tax')
+
+    def calculate_tax(self,product:Product):
+        return product.unit_price * Decimal(1.1)
+
+    # def create(self, validated_data):
+    #     product = Product(**validated_data)
+    #     product.other = 1
+    #     product.save()
+    #     return product
+    
+    # def update(self,instance,validated_data):
+    #     instance.save()
+    #     return instance
+        
